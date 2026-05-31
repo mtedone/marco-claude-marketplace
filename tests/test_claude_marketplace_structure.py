@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the Claude marketplace package structure."""
+"""Validate the Claude marketplace catalog structure."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MARKETPLACE_NAME = "marco-claude-marketplace"
 PLUGIN_NAME = "claude-tdd-cleancode-plugin"
-PLUGIN_PATH = ROOT / "plugins" / PLUGIN_NAME
+PLUGIN_REPO = "mtedone/claude-tdd-workflow-java"
 
 
 def load_json(path: Path) -> dict:
@@ -24,7 +24,7 @@ def load_json(path: Path) -> dict:
 class ClaudeMarketplaceStructureTest(unittest.TestCase):
     def test_marketplace_manifest(self) -> None:
         manifest = load_json(ROOT / ".claude-plugin" / "marketplace.json")
-        plugin_source = f"./plugins/{PLUGIN_NAME}"
+        plugin_source = {"source": "github", "repo": PLUGIN_REPO}
         self.assertEqual(manifest["name"], MARKETPLACE_NAME)
         self.assertEqual(manifest["owner"]["name"], "Marco Tedone")
         self.assertEqual(
@@ -32,41 +32,11 @@ class ClaudeMarketplaceStructureTest(unittest.TestCase):
             [{"name": PLUGIN_NAME, "source": plugin_source}],
         )
         actual_source = manifest["plugins"][0]["source"]
-        self.assertNotIn("..", actual_source)
-        self.assertFalse(actual_source.startswith("/"))
+        self.assertEqual(actual_source["source"], "github")
+        self.assertEqual(actual_source["repo"], PLUGIN_REPO)
 
-    def test_plugin_manifest(self) -> None:
-        manifest = load_json(PLUGIN_PATH / ".claude-plugin" / "plugin.json")
-        self.assertEqual(manifest["name"], PLUGIN_NAME)
-        self.assertTrue(manifest["description"])
-        self.assertEqual(manifest["version"], "1.0.0")
-
-    def test_plugin_assets_are_packaged(self) -> None:
-        required_paths = [
-            "CLAUDE.md",
-            "README.md",
-            "skills/tdd-clean-code-workflow/SKILL.md",
-            "skills/analyse-code-base-for-tdd/SKILL.md",
-            "agents/planning-agent.md",
-            "agents/testing-automation-agent.md",
-            "agents/clean-code-agent.md",
-            "agents/security-agent.md",
-            "agents/audit-agent.md",
-        ]
-        for relative_path in required_paths:
-            path = PLUGIN_PATH / relative_path
-            self.assertTrue(path.is_file(), f"Missing {relative_path}")
-
-    def test_legacy_installers_are_not_packaged(self) -> None:
-        for script_name in ("install.sh", "uninstall.sh"):
-            script = PLUGIN_PATH / script_name
-            self.assertFalse(script.exists(), f"Legacy installer should not be packaged: {script_name}")
-
-    def test_local_metadata_is_not_packaged(self) -> None:
-        excluded_paths = [".git", ".idea", ".claude/settings.local.json"]
-        for relative_path in excluded_paths:
-            path = PLUGIN_PATH / relative_path
-            self.assertFalse(path.exists(), f"Unexpected packaged metadata: {relative_path}")
+    def test_marketplace_does_not_vendor_plugins(self) -> None:
+        self.assertFalse((ROOT / "plugins").exists(), "Marketplace should reference plugin repos")
 
 
 if __name__ == "__main__":

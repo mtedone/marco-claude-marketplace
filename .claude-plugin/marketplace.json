@@ -9,7 +9,10 @@
   "plugins": [
     {
       "name": "claude-tdd-cleancode-plugin",
-      "source": "./plugins/claude-tdd-cleancode-plugin"
+      "source": {
+        "source": "github",
+        "repo": "mtedone/claude-tdd-workflow-java"
+      }
     }
   ]
 }

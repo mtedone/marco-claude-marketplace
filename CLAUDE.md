@@ -23,3 +23,13 @@ Quality Gates: Gate 2 PASSED, Gate 3 PASSED, Gate 4 PASSED, Gate 5 PASSED, Gate 
 Reusable Learning: Marketplace plugins should be installed through `claude plugin marketplace add` and `claude plugin install`; package-local scripts that mutate `~/.claude/plugins/known_marketplaces.json` can corrupt marketplace state when schemas change.
 Rule Changes: Do not package legacy home-directory installer scripts in Claude marketplace plugins.
 Follow-Up: Remove the stale `local` marketplace entry from `~/.claude/plugins/known_marketplaces.json` before retrying installation.
+
+### 2026-05-31
+
+Decision: Converted the marketplace to a catalog-only repository that references `mtedone/claude-tdd-workflow-java`.
+Reason: Marketplace repositories should collect plugin entries, while utility/plugin source code should live in each utility's own repository.
+Agents: planning-agent, architect-agent, testing-automation-agent, security-agent, clean-code-agent, audit-agent.
+Quality Gates: Gate 2 PASSED, Gate 3 PASSED, Gate 4 PASSED, Gate 5 PASSED, Gate 6 PASSED, Gate 8 PASSED.
+Reusable Learning: For independently maintained plugins, use a marketplace plugin source object such as `{ "source": "github", "repo": "owner/repo" }` and keep the marketplace free of vendored plugin code.
+Rule Changes: Plugin changes belong in their source repositories; marketplace changes should be limited to catalog metadata.
+Follow-Up: Ensure `mtedone/claude-tdd-workflow-java` contains its own `.claude-plugin/plugin.json`.

@@ -45,8 +45,6 @@ class ClaudeMarketplaceStructureTest(unittest.TestCase):
         required_paths = [
             "CLAUDE.md",
             "README.md",
-            "install.sh",
-            "uninstall.sh",
             "skills/tdd-clean-code-workflow/SKILL.md",
             "skills/analyse-code-base-for-tdd/SKILL.md",
             "agents/planning-agent.md",
@@ -59,11 +57,10 @@ class ClaudeMarketplaceStructureTest(unittest.TestCase):
             path = PLUGIN_PATH / relative_path
             self.assertTrue(path.is_file(), f"Missing {relative_path}")
 
-    def test_scripts_are_executable(self) -> None:
+    def test_legacy_installers_are_not_packaged(self) -> None:
         for script_name in ("install.sh", "uninstall.sh"):
             script = PLUGIN_PATH / script_name
-            self.assertTrue(script.is_file(), f"Missing {script_name}")
-            self.assertTrue(script.stat().st_mode & 0o111, f"{script_name} is not executable")
+            self.assertFalse(script.exists(), f"Legacy installer should not be packaged: {script_name}")
 
     def test_local_metadata_is_not_packaged(self) -> None:
         excluded_paths = [".git", ".idea", ".claude/settings.local.json"]

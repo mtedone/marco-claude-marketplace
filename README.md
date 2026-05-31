@@ -22,6 +22,10 @@ python3 -m unittest tests/test_claude_marketplace_structure.py
 
 ## Add Marketplace
 
+If you previously installed the old local plugin manually, remove the stale `local`
+marketplace entry from Claude Code first. Current Claude Code rejects the legacy
+`"source": "local"` marketplace source type.
+
 ```bash
 claude plugin marketplace add /Users/marcotedone/dev/claude-tools/marco-claude-marketplace
 ```

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "marco-claude-marketplace",
+  "description": "Local Claude Code marketplace for Marco Tedone plugins.",
+  "version": "1.0.0",
+  "owner": {
+    "name": "Marco Tedone"
+  },
+  "plugins": [
+    {
+      "name": "claude-tdd-cleancode-plugin",
+      "source": "./plugins/claude-tdd-cleancode-plugin"
+    }
+  ]
+}
